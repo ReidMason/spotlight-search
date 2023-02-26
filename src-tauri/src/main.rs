@@ -2,7 +2,7 @@
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
 )]
-use tauri::{window, AppHandle, LogicalSize, Manager, Size, Window};
+use tauri::{window, AppHandle, LogicalSize, Manager, Size};
 use window_vibrancy::{apply_blur, apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -19,7 +19,7 @@ fn resize_window(height: f64, app_handle: AppHandle) -> String {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![resize_window, resize_window])
+        .invoke_handler(tauri::generate_handler![resize_window])
         .setup(|app| {
             let window = app.get_window("main").unwrap();
 
