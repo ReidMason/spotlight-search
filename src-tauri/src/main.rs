@@ -6,23 +6,19 @@ use tauri::{window, AppHandle, LogicalSize, Manager, Size, Window};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
-#[tauri::command]
-fn resize_window(app: AppHandle) -> Window {
-    let window = app.get_window("main").unwrap();
+fn resize_window(height: f64, app_handle: tauri::AppHandle) -> String {
+    let window = app_handle.get_window("main").unwrap();
     window.set_size(Size::Logical(LogicalSize {
         width: 675.0,
-        height: 100.0,
+        height,
     }));
-    window
+
+    return "testing".to_string();
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, resize_window])
+        .invoke_handler(tauri::generate_handler![resize_window, resize_window])
         .setup(|app| {
             let window = app.get_window("main").unwrap();
 
