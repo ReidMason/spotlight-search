@@ -2,7 +2,7 @@
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
 )]
-use tauri::{window, LogicalSize, Manager, Size};
+use tauri::{window, AppHandle, LogicalSize, Manager, Size, Window};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -10,17 +10,23 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
+#[tauri::command]
+fn resize_window(app: AppHandle) -> Window {
+    let window = app.get_window("main").unwrap();
+    window.set_size(Size::Logical(LogicalSize {
+        width: 675.0,
+        height: 100.0,
+    }));
+    window
+}
+
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![greet, resize_window])
         .setup(|app| {
             let window = app.get_window("main").unwrap();
 
             // This but it needs to be done responsively when the content loads
-            // window.set_size(Size::Logical(LogicalSize {
-            //     width: 675.0,
-            //     height: 100.0,
-            // }));
 
             use window_vibrancy::{
                 apply_blur, apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState,

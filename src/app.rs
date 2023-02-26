@@ -20,6 +20,7 @@ struct GreetArgs<'a> {
 }
 #[function_component(App)]
 pub fn app() -> Html {
+    let resize_tigger = use_node_ref();
     // let greet_input_ref = use_node_ref();
 
     // let name = use_state(|| String::new());
