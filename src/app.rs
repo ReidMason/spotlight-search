@@ -20,7 +20,6 @@ struct GreetArgs {
 }
 #[function_component(App)]
 pub fn app() -> Html {
-    let greet_input_ref = use_node_ref();
     let main_body_ref = use_node_ref();
 
     let height = use_state(|| 0.0);

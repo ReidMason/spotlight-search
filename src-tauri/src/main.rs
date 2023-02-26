@@ -3,10 +3,11 @@
     windows_subsystem = "windows"
 )]
 use tauri::{window, AppHandle, LogicalSize, Manager, Size, Window};
+use window_vibrancy::{apply_blur, apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-fn resize_window(height: f64, app_handle: tauri::AppHandle) -> String {
+fn resize_window(height: f64, app_handle: AppHandle) -> String {
     let window = app_handle.get_window("main").unwrap();
     window.set_size(Size::Logical(LogicalSize {
         width: 675.0,
@@ -23,10 +24,6 @@ fn main() {
             let window = app.get_window("main").unwrap();
 
             // This but it needs to be done responsively when the content loads
-
-            use window_vibrancy::{
-                apply_blur, apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState,
-            };
 
             #[cfg(target_os = "macos")]
             apply_vibrancy(
