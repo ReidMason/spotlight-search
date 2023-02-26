@@ -13,6 +13,9 @@
   "tauri": {
     "macOSPrivateApi": true,
     "allowlist": {
+      "window": {
+        "startDragging": true
+      },
       "all": false,
       "shell": {
         "all": false,
