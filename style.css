@@ -11,6 +11,11 @@ body, main {
   height: 100%;
 }
 
+.invisible-button {
+  background: transparent;
+  border: none;
+}
+
 .input {
   font-size: 1.6rem;
   border: 1px solid transparent;

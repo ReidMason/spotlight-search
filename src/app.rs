@@ -15,73 +15,67 @@ extern "C" {
 }
 
 #[derive(Serialize, Deserialize)]
-struct GreetArgs<'a> {
-    name: &'a str,
+struct GreetArgs {
+    height: f64,
 }
 #[function_component(App)]
 pub fn app() -> Html {
-    // let greet_input_ref = use_node_ref();
+    let greet_input_ref = use_node_ref();
+    let main_body_ref = use_node_ref();
 
-    // let name = use_state(|| String::new());
+    let height = use_state(|| 0.0);
 
-    // let greet_msg = use_state(|| String::new());
-    // {
-    //     let greet_msg = greet_msg.clone();
-    //     let name = name.clone();
-    //     let name2 = name.clone();
-    //     use_effect_with_deps(
-    //         move |_| {
-    //             spawn_local(async move {
-    //                 if name.is_empty() {
-    //                     return;
-    //                 }
+    let height2 = height.clone();
+    let height3 = height.clone();
+    use_effect_with_deps(
+        move |_| {
+            spawn_local(async move {
+                // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+                invoke(
+                    "resize_window",
+                    to_value(&GreetArgs { height: *height2 }).unwrap(),
+                )
+                .await;
+            });
+        },
+        height3,
+    );
 
-    //                 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    //                 let new_msg =
-    //                     invoke("greet", to_value(&GreetArgs { name: &*name }).unwrap()).await;
-    //                 log(&new_msg.as_string().unwrap());
-    //                 greet_msg.set(new_msg.as_string().unwrap());
-    //             });
-
-    //             || {}
-    //         },
-    //         name2,
-    //     );
-    // }
-
-    // let greet = {
-    //     let name = name.clone();
-    //     let greet_input_ref = greet_input_ref.clone();
-    //     Callback::from(move |e: SubmitEvent| {
-    //         e.prevent_default();
-    //         name.set(
-    //             greet_input_ref
-    //                 .cast::<web_sys::HtmlInputElement>()
-    //                 .unwrap()
-    //                 .value(),
-    //         );
-    //     })
-    // };
+    let update_height = {
+        let main_body_ref = main_body_ref.clone();
+        Callback::from(move |e: MouseEvent| {
+            e.prevent_default();
+            let element = main_body_ref.cast::<web_sys::HtmlInputElement>().unwrap();
+            let height_value = f64::from(element.client_height());
+            height.set(height_value);
+        })
+    };
 
     html! {
-        <main >
-            <div data-tauri-drag-region="true"   class="search-container">
-                <svg data-tauri-drag-region="true"    class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                </svg>
-                <input class="input" placeholder="Spotlight Search"/>
-            </div>
-            <MyComponent />
-            <div>
-                <p>{"testing"}</p>
-                <p>{"testing"}</p>
-                <p>{"testing"}</p>
-                <p>{"testing"}</p>
-                <p>{"testing"}</p>
-                <p>{"testing"}</p>
-                <p>{"testing"}</p>
-                <p>{"testing"}</p>
-            </div>
+            <main >
+        <div ref={main_body_ref}>
+                    <div data-tauri-drag-region="true"   class="search-container">
+
+                    <button class="invisible-button" onclick={update_height}>
+                        <svg data-tauri-drag-region="true"    class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        </svg>
+                    </button>
+
+                    <input class="input" placeholder="Spotlight Search"/>
+                    </div>
+                    <MyComponent />
+                    <div>
+                        <p>{"testing"}</p>
+                        <p>{"testing"}</p>
+                        <p>{"testing"}</p>
+                        <p>{"testing"}</p>
+                        <p>{"testing"}</p>
+                        <p>{"testing"}</p>
+                        <p>{"testing"}</p>
+                        <p>{"testing"}</p>
+                    </div>
+    </div>
                 // <div class="row">
                 //     <a href="https://tauri.app" target="_blank">
                 //         <img src="public/tauri.svg" class="logo tauri" alt="Tauri logo"/>
@@ -107,7 +101,7 @@ pub fn app() -> Html {
                 //     <button type="submit">{"Greet"}</button>
                 // </form>
 
-                // <p><b>{ &*greet_msg }</b></p>
+                // <p><b>{ &*name }</b></p>
         </main>
     }
 }
