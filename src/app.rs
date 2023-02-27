@@ -81,7 +81,7 @@ pub fn app() -> Html {
                     .unwrap()
                     .value();
 
-                let result = invoke("get_files", JsValue::UNDEFINED).await;
+                let result = invoke("get_apps", JsValue::UNDEFINED).await;
                 let new_files = from_value(result).unwrap();
                 files.set(new_files);
             })
