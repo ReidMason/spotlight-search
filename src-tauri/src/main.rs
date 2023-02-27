@@ -28,6 +28,7 @@ fn main() {
             //     height: 100.0,
             // }));
 
+            #[allow(unused_imports)]
             use window_vibrancy::{
                 apply_blur, apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState,
             };
