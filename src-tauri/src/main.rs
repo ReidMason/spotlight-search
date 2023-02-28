@@ -6,14 +6,16 @@ mod commands;
 mod services;
 
 use crate::commands::{get_apps::get_apps, manage_window::resize_window};
-use services::file_handler::get_apps1;
+use services::file_handler::{get_apps_from_files, get_dir_items};
 use tauri::Manager;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 
 fn main() {
     get_apps();
-    get_apps1();
+    get_apps_from_files(get_dir_items(
+        r#"C:\ProgramData\Microsoft\Windows\Start Menu\Programs"#,
+    ));
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![resize_window, get_apps])
         .setup(|app| {
