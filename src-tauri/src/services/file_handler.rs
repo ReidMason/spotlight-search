@@ -1,8 +1,5 @@
 use infer::Type;
-use std::{
-    fs::{read_dir, ReadDir},
-    path::PathBuf,
-};
+use std::{fs::read_dir, path::PathBuf};
 
 const LNK_MIME_TYPE: &str = "application/x-ms-shortcut";
 
@@ -43,7 +40,7 @@ pub fn get_dir_items<'a>(path: &str) -> Vec<PathBuf> {
             Ok(file) => file,
             Err(_) => continue,
         };
-        
+
         let path = file.path();
 
         if path.is_file() {
