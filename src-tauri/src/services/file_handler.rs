@@ -29,3 +29,26 @@ pub fn get_dir_items<'a>(path: &str) -> Vec<PathBuf> {
     files_array
 }
 
+pub fn get_apps1() -> Vec<String> {
+    let files = get_dir_items(r#"C:\Users\Web.RNW\Pictures"#);
+
+    let mut new_files: Vec<String> = vec![];
+    for file in files {
+        let kind_opt = match infer::get_from_path(&file) {
+            Ok(kind_opt) => kind_opt,
+            Err(_) => continue,
+        };
+
+        match kind_opt {
+            Some(kind) => {
+                if kind.mime_type() == "image/jpg" {
+                    println!("{:?}", file);
+                    new_files.push(file.display().to_string());
+                }
+            }
+            None => continue,
+        }
+    }
+    println!("{:?}", new_files);
+    new_files
+}
