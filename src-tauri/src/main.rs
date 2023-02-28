@@ -10,18 +10,6 @@ use tauri::Manager;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 
-// #[command]
-// fn get_files() -> Vec<String> {
-//     let files = vec![];
-//     get_dir_items("./", &files).unwrap();
-//     let mut files_new = vec![];
-//     for file in files {
-//         let file_name = file.display().to_string();
-//         files_new.push(file_name)
-//     }
-//     files_new
-// }
-
 fn main() {
     get_apps();
     tauri::Builder::default()

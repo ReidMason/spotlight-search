@@ -28,3 +28,4 @@ pub fn get_dir_items<'a>(path: &str) -> Vec<PathBuf> {
     println!("Here's The Items The Directory: \n {:#?}", files_array);
     files_array
 }
+
