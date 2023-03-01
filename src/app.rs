@@ -82,8 +82,19 @@ pub fn app() -> Html {
                     .value();
 
                 let result = invoke("get_apps", JsValue::UNDEFINED).await;
-                let new_files = from_value(result).unwrap();
-                files.set(new_files);
+                let new_files: Vec<String> = from_value(result).unwrap();
+                let mut new_array: Vec<String> = vec![];
+
+                for file in new_files {
+                    if file
+                        .to_lowercase()
+                        .contains(&new_search_term.to_lowercase())
+                    {
+                        new_array.push(file)
+                    }
+                }
+
+                files.set(new_array);
             })
         })
     };

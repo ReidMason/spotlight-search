@@ -53,3 +53,20 @@ pub fn get_apps_from_files(files: Vec<PathBuf>) -> Vec<String> {
     println!("THIS IS LET NEW_FILES: {:#?}", new_files);
     new_files
 }
+
+pub fn get_search_items() -> Vec<String> {
+    let files = get_apps_from_files(get_dir_items(
+        r#"C:\ProgramData\Microsoft\Windows\Start Menu\Programs"#,
+    ));
+    let mut new_array: Vec<String> = vec![];
+    let input = "zzzz".to_lowercase();
+
+    for file in files {
+        if file.to_lowercase().contains(&input.to_lowercase()) {
+            new_array.push(file)
+        }
+    }
+
+    println!("THIS IS GET SEARCH ITEMS: {:?}", new_array);
+    new_array
+}
