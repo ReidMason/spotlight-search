@@ -43,7 +43,7 @@ pub fn get_apps_from_files(files: Vec<PathBuf>) -> Vec<String> {
         match kind_opt {
             Some(kind) => {
                 if get_matcher_type(kind) == infer::MatcherType::App {
-                    new_files.push(file.display().to_string());
+                    new_files.push(file.file_name().unwrap().to_str().unwrap().to_string());
                 }
             }
             None => continue,
@@ -54,19 +54,19 @@ pub fn get_apps_from_files(files: Vec<PathBuf>) -> Vec<String> {
     new_files
 }
 
-pub fn get_search_items() -> Vec<String> {
-    let files = get_apps_from_files(get_dir_items(
-        r#"C:\ProgramData\Microsoft\Windows\Start Menu\Programs"#,
-    ));
-    let mut new_array: Vec<String> = vec![];
-    let input = "zzzz".to_lowercase();
+// pub fn get_search_items() -> Vec<String> {
+//     let files = get_apps_from_files(get_dir_items(
+//         r#"C:\ProgramData\Microsoft\Windows\Start Menu\Programs"#,
+//     ));
+//     let mut new_array: Vec<String> = vec![];
+//     let input = "zzzz".to_lowercase();
 
-    for file in files {
-        if file.to_lowercase().contains(&input.to_lowercase()) {
-            new_array.push(file)
-        }
-    }
+//     for file in files {
+//         if file.to_lowercase().contains(&input.to_lowercase()) {
+//             new_array.push(file)
+//         }
+//     }
 
-    println!("THIS IS GET SEARCH ITEMS: {:?}", new_array);
-    new_array
-}
+//     println!("THIS IS GET SEARCH ITEMS: {:?}", new_array);
+//     new_array
+// }

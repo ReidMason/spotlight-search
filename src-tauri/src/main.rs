@@ -6,13 +6,11 @@ mod commands;
 mod services;
 
 use crate::commands::{get_apps::get_apps, manage_window::resize_window};
-use services::file_handler::get_search_items;
 use tauri::Manager;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 
 fn main() {
-    get_search_items();
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![resize_window, get_apps])
         .setup(|app| {
