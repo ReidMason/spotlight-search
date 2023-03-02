@@ -2,32 +2,19 @@
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
 )]
-use tauri::{window, LogicalSize, Manager, Size};
+mod commands;
+mod services;
+
+use crate::commands::{get_apps::get_apps, manage_window::resize_window};
+use tauri::Manager;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn resize_window(height: f64, app_handle: tauri::AppHandle) -> String {
-    let window = app_handle.get_window("main").unwrap();
-    window.set_size(Size::Logical(LogicalSize {
-        width: 675.0,
-        height,
-    }));
-
-    return "testing".to_string();
-}
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![resize_window])
+        .invoke_handler(tauri::generate_handler![resize_window, get_apps])
         .setup(|app| {
             let window = app.get_window("main").unwrap();
-
-            // This but it needs to be done responsively when the content loads
-            // window.set_size(Size::Logical(LogicalSize {
-            //     width: 675.0,
-            //     height: 100.0,
-            // }));
-
             #[allow(unused_imports)]
             use window_vibrancy::{
                 apply_blur, apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState,
