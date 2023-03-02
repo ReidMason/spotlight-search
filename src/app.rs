@@ -70,7 +70,7 @@ pub fn app() -> Html {
         let search_input_ref = search_input_ref.clone();
         let files = files.clone();
 
-        Callback::from(move |e: SubmitEvent| {
+        Callback::from(move |e: InputEvent| {
             e.prevent_default();
             let search_input_ref = search_input_ref.clone();
             let files = files.clone();
@@ -80,6 +80,11 @@ pub fn app() -> Html {
                     .cast::<web_sys::HtmlInputElement>()
                     .unwrap()
                     .value();
+
+                if new_search_term.is_empty() {
+                    files.set(vec![]);
+                    return;
+                }
 
                 let result = invoke("get_apps", JsValue::UNDEFINED).await;
                 let new_files: Vec<String> = from_value(result).unwrap();
@@ -108,17 +113,18 @@ pub fn app() -> Html {
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                         </svg>
                     </button>
-                    <form onsubmit={submit_search}>
-                        <input class="input" placeholder="Spotlight Search" ref={search_input_ref} />
+                    // <form onsubmit={submit_search}>
+                    <form>
+                        <input class="input" oninput={submit_search} placeholder="Spotlight Search" ref={search_input_ref} />
                     </form>
                 </div>
-                <MyComponent />
-                <div>
+                // <MyComponent />
+                <div class="results">
                     {files
                        .iter()
                        .enumerate()
                        .map(|(i, file)| {
-                           html! {<p key={i}>{ file }</p>}
+                           html! {<p class="app-result" key={i}>{ file }</p>}
                        })
                        .collect::<Html>()}
                 </div>

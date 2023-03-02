@@ -16,6 +16,10 @@ body, main {
   border: none;
 }
 
+.results .app-result {
+  background-color: red;
+}
+
 .input {
   font-size: 1.6rem;
   border: 1px solid transparent;
@@ -35,7 +39,6 @@ body, main {
 .search-container {
   background-color: rgb(41, 43, 46, 0.2);
   display: flex;
-  justify-content: center;
   align-items: center;
   gap: 0.5rem;
   color: #ffffff;
