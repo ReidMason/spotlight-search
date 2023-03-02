@@ -15,8 +15,13 @@ extern "C" {
 }
 
 #[derive(Serialize, Deserialize)]
-struct GreetArgs {
+struct WindowResizeArgs {
     height: f64,
+}
+
+#[derive(Serialize, Deserialize)]
+struct SearchArgs {
+    search: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -44,7 +49,7 @@ pub fn app() -> Html {
                     let height_value = f64::from(element.client_height());
                     invoke(
                         "resize_window",
-                        to_value(&GreetArgs {
+                        to_value(&WindowResizeArgs {
                             height: height_value,
                         })
                         .unwrap(),
@@ -81,25 +86,16 @@ pub fn app() -> Html {
                     .unwrap()
                     .value();
 
-                if new_search_term.is_empty() {
-                    files.set(vec![]);
-                    return;
-                }
-
-                let result = invoke("get_apps", JsValue::UNDEFINED).await;
+                let result = invoke(
+                    "get_apps",
+                    to_value(&SearchArgs {
+                        search: new_search_term,
+                    })
+                    .unwrap(),
+                )
+                .await;
                 let new_files: Vec<String> = from_value(result).unwrap();
-                let mut new_array: Vec<String> = vec![];
-
-                for file in new_files {
-                    if file
-                        .to_lowercase()
-                        .contains(&new_search_term.to_lowercase())
-                    {
-                        new_array.push(file)
-                    }
-                }
-
-                files.set(new_array);
+                files.set(new_files);
             })
         })
     };
