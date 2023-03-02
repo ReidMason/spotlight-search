@@ -18,7 +18,7 @@ pub fn get_apps(search: String) -> Vec<String> {
         files.append(&mut mac_apps);
     }
 
-    files.retain(|x| x.to_lowercase().contains(&search));
+    files.retain(|x| x.to_lowercase().contains(&search.to_lowercase()));
     files.truncate(5);
     files
 }
