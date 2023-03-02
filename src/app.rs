@@ -35,8 +35,6 @@ pub fn app() -> Html {
     let search_input_ref = use_node_ref();
     let height = use_state(|| 50.0);
     let files: UseStateHandle<Vec<String>> = use_state(|| vec![]);
-    let height2 = height.clone();
-    let height3 = height.clone();
 
     {
         let files = files.clone();
@@ -104,53 +102,29 @@ pub fn app() -> Html {
         <main >
             <div ref={main_body_ref}>
                 <div data-tauri-drag-region="true"   class="search-container">
-                    <button class="invisible-button" onclick={update_height}>
+                    <button onclick={update_height}>
                         <svg data-tauri-drag-region="true"    class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                         </svg>
                     </button>
-                    // <form onsubmit={submit_search}>
                     <form>
                         <input class="input" oninput={submit_search} placeholder="Spotlight Search" ref={search_input_ref} />
                     </form>
                 </div>
-                // <MyComponent />
                 <div class="results">
                     {files
                        .iter()
                        .enumerate()
                        .map(|(i, file)| {
-                           html! {<p class="app-result" key={i}>{ file }</p>}
+                           html! {<li  key={i}>
+                                    <button class="app-result">
+                                        { file }
+                                    </button>
+                                  </li>}
                        })
                        .collect::<Html>()}
                 </div>
             </div>
-                // <div class="row">
-                //     <a href="https://tauri.app" target="_blank">
-                //         <img src="public/tauri.svg" class="logo tauri" alt="Tauri logo"/>
-                //     </a>
-                //     <a href="https://yew.rs" target="_blank">
-                //         <img src="public/yew.png" class="logo yew" alt="Yew logo"/>
-                //     </a>
-                // </div>
-
-                // <p>{"Click on the Tauri and Yew logos to learn more."}</p>
-
-                // <p>
-                //     {"Recommended IDE setup: "}
-                //     <a href="https://code.visualstudio.com/" target="_blank">{"VS Code"}</a>
-                //     {" + "}
-                //     <a href="https://github.com/tauri-apps/tauri-vscode" target="_blank">{"Tauri"}</a>
-                //     {" + "}
-                //     <a href="https://github.com/rust-lang/rust-analyzer" target="_blank">{"rust-analyzer"}</a>
-                // </p>
-
-                // <form class="row" onsubmit={greet}>
-                //     <input id="greet-input" ref={greet_input_ref} placeholder="Enter a name..." />
-                //     <button type="submit">{"Greet"}</button>
-                // </form>
-
-                // <p><b>{ &*name }</b></p>
         </main>
     }
 }

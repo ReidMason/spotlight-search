@@ -3,6 +3,7 @@
   line-height: 24px;
   font-weight: 400;
   height: 100%;
+  font-family: "system-ui";
 
   color: hsla(217, 0%, 86%, 0.9);
 }
@@ -11,13 +12,34 @@ body, main {
   height: 100%;
 }
 
-.invisible-button {
+/* css default resets (There are better ways to do this)*/
+button {
   background: transparent;
   border: none;
+  color: unset;
+  font-family: unset;
+  font-size: unset;
+  font-weight: unset;
+}
+li {
+  list-style-type: none;
+}
+
+.results {
+  border-radius: 0 0 0.7rem 0.7rem;
+  overflow: hidden;
 }
 
 .results .app-result {
-  background-color: red;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  width: 100%;
+  text-align: left;
+}
+
+.results .app-result:focus {
+  background-color: hsla(209, 0%, 91%, 0.2);
+  outline: none;
 }
 
 .input {
