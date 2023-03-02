@@ -1,7 +1,8 @@
 use crate::services::mime_type_handler::{get_custom_infer, get_matcher_type};
+#[cfg(target_os = "macos")]
+use std::os::unix::prelude::PermissionsExt;
 use std::{
     fs::{read_dir, DirEntry},
-    os::unix::prelude::PermissionsExt,
     path::PathBuf,
 };
 
@@ -44,6 +45,7 @@ pub fn get_dir_items(path: &str) -> Vec<PathBuf> {
     files_array
 }
 
+#[cfg(target_os = "macos")]
 fn is_executable(file: DirEntry) -> bool {
     let path = file.path();
     if path.is_dir() {
@@ -59,6 +61,7 @@ fn is_executable(file: DirEntry) -> bool {
     }
 }
 
+#[cfg(target_os = "macos")]
 fn is_valid_mac_dir(path_name: &str) -> bool {
     let valid_dirs = ["/Contents", ".app", "MacOS"];
     for valid_dir in valid_dirs {
