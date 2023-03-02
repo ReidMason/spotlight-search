@@ -1,5 +1,9 @@
 use crate::services::mime_type_handler::{get_custom_infer, get_matcher_type};
-use std::{fs::read_dir, path::PathBuf};
+use std::{
+    fs::{read_dir, DirEntry},
+    os::unix::prelude::PermissionsExt,
+    path::PathBuf,
+};
 
 pub fn get_dir_items(path: &str) -> Vec<PathBuf> {
     let mut files_array: Vec<PathBuf> = vec![];
@@ -20,12 +24,50 @@ pub fn get_dir_items(path: &str) -> Vec<PathBuf> {
         let path = file.path();
 
         if path.is_file() {
+            #[cfg(target_os = "macos")]
+            if is_executable(file) {
+                files_array.push(path.to_owned())
+            }
+
+            #[cfg(target_os = "windows")]
             files_array.push(path.to_owned())
-        } else if let Some(path) = path.to_str() {
-            files_array.append(&mut get_dir_items(path));
+        } else if let Some(path_name) = path.to_str() {
+            #[cfg(target_os = "macos")]
+            if is_valid_mac_dir(path_name) {
+                files_array.append(&mut get_dir_items(path_name));
+            }
+
+            #[cfg(target_os = "windows")]
+            files_array.append(&mut get_dir_items(path_name));
         }
     }
     files_array
+}
+
+fn is_executable(file: DirEntry) -> bool {
+    let path = file.path();
+    if path.is_dir() {
+        return false;
+    }
+
+    match file.metadata() {
+        Ok(file) => {
+            let permissions = file.permissions();
+            permissions.mode() & 0o111 != 0
+        }
+        Err(_) => false,
+    }
+}
+
+fn is_valid_mac_dir(path_name: &str) -> bool {
+    let valid_dirs = ["/Contents", ".app", "MacOS"];
+    for valid_dir in valid_dirs {
+        if path_name.ends_with(valid_dir) {
+            return true;
+        }
+    }
+
+    false
 }
 
 pub fn get_apps_from_files(files: Vec<PathBuf>) -> Vec<String> {
@@ -50,7 +92,7 @@ pub fn get_apps_from_files(files: Vec<PathBuf>) -> Vec<String> {
         }
     }
 
-    println!("THIS IS LET NEW_FILES: {:#?}", new_files);
+    // println!("THIS IS LET NEW_FILES: {:#?}", new_files);
     new_files
 }
 
