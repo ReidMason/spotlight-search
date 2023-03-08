@@ -1,7 +1,6 @@
 use crate::services::file_handler::{get_apps_from_files, get_dir_items};
-use tauri::command;
 
-#[command]
+#[tauri::command]
 pub fn get_apps(search: String) -> Vec<String> {
     if search.is_empty() {
         return vec![];

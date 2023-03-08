@@ -6,6 +6,37 @@ use std::{
     path::PathBuf,
 };
 
+#[derive(Debug)]
+pub struct SpotlightFile {
+    name: String,
+    path: PathBuf,
+    icon: String,
+}
+
+impl SpotlightFile {
+    pub fn new_from_path_buf(path: PathBuf) -> SpotlightFile {
+        let name = path.file_name().unwrap().to_str().unwrap().to_string();
+
+        let file = SpotlightFile {
+            name,
+            path,
+            icon: "img here".to_string(),
+        };
+        file
+    }
+}
+
+pub fn convert_to_spotlight_file(path_bufs: Vec<PathBuf>) -> Vec<SpotlightFile> {
+    let path_bufs = path_bufs;
+    let mut files: Vec<SpotlightFile> = vec![];
+
+    for path_buf in path_bufs {
+        files.push(SpotlightFile::new_from_path_buf(path_buf));
+    }
+
+    files
+}
+
 pub fn get_dir_items(path: &str) -> Vec<PathBuf> {
     let mut files_array: Vec<PathBuf> = vec![];
 
@@ -89,13 +120,13 @@ pub fn get_apps_from_files(files: Vec<PathBuf>) -> Vec<String> {
             Some(kind) => {
                 if get_matcher_type(kind) == infer::MatcherType::App {
                     new_files.push(file.file_name().unwrap().to_str().unwrap().to_string());
+                    // new_files.push(file.to_string_lossy().to_string())
                 }
             }
             None => continue,
         }
     }
 
-    // println!("THIS IS LET NEW_FILES: {:#?}", new_files);
     new_files
 }
 

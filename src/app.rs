@@ -1,4 +1,3 @@
-use crate::mycomponent::MyComponent;
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::{from_value, to_value};
 use wasm_bindgen::prelude::*;
@@ -33,6 +32,7 @@ struct FileListArgs {
 pub fn app() -> Html {
     let main_body_ref = use_node_ref();
     let search_input_ref = use_node_ref();
+    let file_selection_ref = use_node_ref();
     let height = use_state(|| 50.0);
     let files: UseStateHandle<Vec<String>> = use_state(|| vec![]);
 
@@ -98,6 +98,11 @@ pub fn app() -> Html {
         })
     };
 
+    let open_file = Callback::from(move |e: MouseEvent| {
+        e.prevent_default();
+        let target = e.target().unwrap();
+    });
+
     html! {
         <main >
             <div ref={main_body_ref}>
@@ -111,6 +116,7 @@ pub fn app() -> Html {
                         <input class="input" oninput={submit_search} placeholder="Spotlight Search" ref={search_input_ref} />
                     </form>
                 </div>
+                <button onclick={open_file} ref={file_selection_ref} class="app-result">{"Tester Text"}</button>
                 <div class="results">
                     {files
                        .iter()
