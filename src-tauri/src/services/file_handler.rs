@@ -1,4 +1,6 @@
-use crate::services::mime_type_handler::{get_custom_infer, get_matcher_type};
+use serde::Serialize;
+
+use crate::services::mime_type_handler::{get_custom_infer, get_matcher_type, MatcherType};
 #[cfg(target_os = "macos")]
 use std::os::unix::prelude::PermissionsExt;
 use std::{
@@ -6,24 +8,40 @@ use std::{
     path::PathBuf,
 };
 
-#[derive(Debug)]
+#[derive(Serialize)]
 pub struct SpotlightFile {
     name: String,
     path: PathBuf,
     icon: String,
+    matcher_type: MatcherType,
 }
 
 impl SpotlightFile {
-    pub fn new_from_path_buf(path: PathBuf) -> SpotlightFile {
-        let name = path.file_name().unwrap().to_str().unwrap().to_string();
+    pub fn new_from_path_buf(path: PathBuf) -> Option<SpotlightFile> {
+        let infer = get_custom_infer();
+
+        let kind_opt = match infer.get_from_path(&path) {
+            Ok(kind_opt) => kind_opt,
+            Err(_) => return None,
+        };
+
+        let matcher_type = match kind_opt {
+            Some(kind) => get_matcher_type(kind),
+            None => infer::MatcherType::Custom,
+        };
 
         let file = SpotlightFile {
-            name,
+            name: get_file_name(&path)?,
             path,
             icon: "img here".to_string(),
+            matcher_type: MatcherType(matcher_type),
         };
-        file
+        Some(file)
     }
+}
+
+pub fn get_file_name(path: &PathBuf) -> Option<String> {
+    Some(path.file_stem()?.to_str()?.to_string())
 }
 
 pub fn convert_to_spotlight_file(path_bufs: Vec<PathBuf>) -> Vec<SpotlightFile> {
@@ -31,7 +49,9 @@ pub fn convert_to_spotlight_file(path_bufs: Vec<PathBuf>) -> Vec<SpotlightFile> 
     let mut files: Vec<SpotlightFile> = vec![];
 
     for path_buf in path_bufs {
-        files.push(SpotlightFile::new_from_path_buf(path_buf));
+        if let Some(file) = SpotlightFile::new_from_path_buf(path_buf) {
+            files.push(file)
+        }
     }
 
     files
@@ -102,32 +122,6 @@ fn is_valid_mac_dir(path_name: &str) -> bool {
     }
 
     false
-}
-
-pub fn get_apps_from_files(files: Vec<PathBuf>) -> Vec<String> {
-    let infer = get_custom_infer();
-
-    // TODO: make this a map?
-    let mut new_files: Vec<String> = vec![];
-
-    for file in files {
-        let kind_opt = match infer.get_from_path(&file) {
-            Ok(kind_opt) => kind_opt,
-            Err(_) => continue,
-        };
-
-        match kind_opt {
-            Some(kind) => {
-                if get_matcher_type(kind) == infer::MatcherType::App {
-                    new_files.push(file.file_name().unwrap().to_str().unwrap().to_string());
-                    // new_files.push(file.to_string_lossy().to_string())
-                }
-            }
-            None => continue,
-        }
-    }
-
-    new_files
 }
 
 // pub fn get_search_items() -> Vec<String> {

@@ -23,9 +23,17 @@ struct SearchArgs {
     search: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-struct FileListArgs {
-    files: Vec<String>,
+#[derive(PartialEq, Debug, Serialize, Deserialize, Clone)]
+struct SpotlightFile {
+    name: String,
+    path: String,
+    icon: String,
+    matcher_type: String,
+}
+
+#[derive(Serialize, Deserialize)]
+struct OpenFileArgs {
+    file: String,
 }
 
 #[function_component(App)]
@@ -34,7 +42,7 @@ pub fn app() -> Html {
     let search_input_ref = use_node_ref();
     let file_selection_ref = use_node_ref();
     let height = use_state(|| 50.0);
-    let files: UseStateHandle<Vec<String>> = use_state(|| vec![]);
+    let files: UseStateHandle<Vec<SpotlightFile>> = use_state(|| vec![]);
 
     {
         let files = files.clone();
@@ -92,7 +100,7 @@ pub fn app() -> Html {
                     .unwrap(),
                 )
                 .await;
-                let new_files: Vec<String> = from_value(result).unwrap();
+                let new_files: Vec<SpotlightFile> = from_value(result).unwrap();
                 files.set(new_files);
             })
         })
@@ -100,15 +108,33 @@ pub fn app() -> Html {
 
     let open_file = Callback::from(move |e: MouseEvent| {
         e.prevent_default();
-        let target = e.target().unwrap();
+        let target = e
+            .target()
+            .and_then(|x| x.dyn_into::<web_sys::HtmlElement>().ok())
+            .unwrap();
+        let path = target.get_attribute("path").unwrap();
+
+        spawn_local(async move {
+            invoke("open_file", to_value(&OpenFileArgs { file: path }).unwrap()).await;
+        })
     });
+
+    let handle_mouse_over = {
+        let search_input_ref = search_input_ref.clone();
+        Callback::from(move |_| {
+            let element = search_input_ref
+                .cast::<web_sys::HtmlInputElement>()
+                .unwrap();
+            element.focus().unwrap()
+        })
+    };
 
     html! {
         <main >
             <div ref={main_body_ref}>
-                <div data-tauri-drag-region="true"   class="search-container">
+                <div data-tauri-drag-region="true" class="search-container">
                     <button onclick={update_height}>
-                        <svg data-tauri-drag-region="true"    class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <svg data-tauri-drag-region="true" class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                         </svg>
                     </button>
@@ -116,20 +142,18 @@ pub fn app() -> Html {
                         <input class="input" oninput={submit_search} placeholder="Spotlight Search" ref={search_input_ref} />
                     </form>
                 </div>
-                <button onclick={open_file} ref={file_selection_ref} class="app-result">{"Tester Text"}</button>
-                <div class="results">
+                <ul onmouseover={handle_mouse_over} class="results">
                     {files
-                       .iter()
-                       .enumerate()
-                       .map(|(i, file)| {
-                           html! {<li  key={i}>
-                                    <button class="app-result">
-                                        { file }
+                       .iter().cloned()
+                       .map(|file| {
+                           html! {<li  key={&*file.name}>
+                                    <button onclick={open_file.clone()} path={file.path.clone()} class="app-result">
+                                        { &file.name }
                                     </button>
                                   </li>}
                        })
                        .collect::<Html>()}
-                </div>
+                </ul>
             </div>
         </main>
     }

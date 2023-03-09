@@ -7,7 +7,8 @@
 
   color: hsla(217, 0%, 86%, 0.9);
 }
-body, main {
+body,
+main {
   margin: 0;
   height: 100%;
 }
@@ -26,7 +27,7 @@ li {
 }
 
 .results {
-  border-radius: 0 0 0.7rem 0.7rem;
+  /* border-radius: 0 0 0.7rem 0.7rem; */
   overflow: hidden;
 }
 
@@ -37,7 +38,8 @@ li {
   text-align: left;
 }
 
-.results .app-result:focus {
+.results:not(:hover) .app-result:focus,
+.results .app-result:hover {
   background-color: hsla(209, 0%, 91%, 0.2);
   outline: none;
 }
@@ -47,7 +49,7 @@ li {
   border: 1px solid transparent;
   background-color: transparent;
   width: 100%;
-  color: hsl(211, 22%, 86%)
+  color: hsl(211, 22%, 86%);
 }
 
 .input:focus {
@@ -64,7 +66,7 @@ li {
   align-items: center;
   gap: 0.5rem;
   color: #ffffff;
-  border-radius: 0.7rem;
+  /* border-radius: 0.7rem; */
   height: 50px;
   padding: 0 0.7rem;
 }
@@ -74,4 +76,3 @@ li {
   aspect-ratio: 1;
   color: hsla(217, 0%, 86%, 0.8);
 }
-
