@@ -144,9 +144,9 @@ pub fn app() -> Html {
                 </div>
                 <ul onmouseover={handle_mouse_over} class="results">
                     {files
-                       .iter().cloned()
+                       .iter()
                        .map(|file| {
-                           html! {<li  key={&*file.name}>
+                           html! {<li  key={&*file.path}>
                                     <button onclick={open_file.clone()} path={file.path.clone()} class="app-result">
                                         { &file.name }
                                     </button>
